@@ -1,0 +1,28 @@
+import { NextResponse } from "next/server";
+import User from "@/models/user";
+import { connectDB } from "@/mongodb/mongodb"
+import bcrypt from "bcryptjs";
+
+export async function POST(request: Request) {
+    const { fullname, email, password } = await request.json()
+    console.log(fullname, email, password);
+    if (!password || password.length < 6) return NextResponse.json(
+        { message: "Password must be at least 6 characters" },
+        { status: 400 })
+    try {
+        await connectDB()
+        const userFound = await User.findOne({ email })
+        if (userFound) return NextResponse.json(
+            { message: "Email is already taken" },
+            { status: 400 })
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, salt)
+        const user = new User({ fullname, email, password: hashedPassword })
+        const savedUser = await user.save()
+        //console.log(savedUser);
+        return NextResponse.json(savedUser)
+    } catch (error) {
+        //console.log(error);
+        return NextResponse.error()
+    }
+}
