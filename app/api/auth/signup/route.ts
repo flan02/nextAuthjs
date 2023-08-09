@@ -20,9 +20,18 @@ export async function POST(request: Request) {
         const user = new User({ fullname, email, password: hashedPassword })
         const savedUser = await user.save()
         //console.log(savedUser);
-        return NextResponse.json(savedUser)
+        //return NextResponse.json(savedUser) //* Ojo devuelve la contraseña
+        return NextResponse.json({
+            _id: savedUser._id,
+            fullname: savedUser.fullname,
+            email: savedUser.email,
+        })
     } catch (error) {
         //console.log(error);
-        return NextResponse.error()
+        if (error instanceof Error) {
+            return NextResponse.json({
+                message: error.message
+            }, { status: 400 })
+        }
     }
 }
