@@ -2,6 +2,8 @@ import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
 //? NextAuth tiene Databases y guarda directamente en la base de dato
+//? Recordar qe una cosa es el TOKEN & otra cosa es la SESSION
+
 //! Estas funciones se ejecutan en el servidor varias veces
 //TODO podemos autenticar usando de providers: credenciales, google, facebook, github, etc
 
@@ -21,17 +23,18 @@ const handler = NextAuth({
     ],
     callbacks: {
         jwt({ account, token, user, profile, session }) {
-            console.log({
-                account,
-                token,
-                user,
-                profile,
-            });
+            /*   console.log({account,token,user,profile,}); */
             // * Aqui podemos modificar el token p/q guarde los datos qe ya tiene.
-            // token.hello = "hello world."
+            // token.hello = "hello world"
+            if (user) token.user = user
+            //console.log(token);
             return token
         },
-        // session() { },
+        session({ session, token }) {
+            //console.log(session);
+            session.user = token.user as any //* crear interfaz, esto aparece en el frontend
+            return session
+        },
     }
 })
 
