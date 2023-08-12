@@ -3,11 +3,13 @@
 import axios, { AxiosError } from "axios"
 import { FormEvent, useState } from "react"
 import { signIn } from 'next-auth/react' //? Podemos loguearnos inmediatamente despues de registrarnos
+import { useRouter } from "next/navigation"
 
 //! Por defecto los botones qe van dentro de un form llevan el tipo submit
 
 const Register = () => {
     const [error, setError] = useState('')
+    const router = useRouter()
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -25,9 +27,10 @@ const Register = () => {
                 email: signupResponse.data.email,
                 password,
                 redirect: false,
-                //callbackUrl: '/dashboard'
+                //callbackUrl: '/'
             }) //* Hacemos el login
-            console.log(resAuth)
+            if (resAuth?.ok) return router.push('/dashboard') //* Si el login es correcto redireccionamos
+            //console.log(resAuth)
         } catch (error) {
             //console.log(error)
             if (error instanceof AxiosError) setError(error.response?.data.message)

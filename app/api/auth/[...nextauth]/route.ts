@@ -46,6 +46,9 @@ const handler = NextAuth({
             session.user = token.user as any //? La sesion tendra en el navegador data del token
             return session
         },
+    },
+    pages: {
+        signIn: '/login', //* Si accedo a localhost:3000/api/auth/signin me redirecciona a /login
     }
 })
 
