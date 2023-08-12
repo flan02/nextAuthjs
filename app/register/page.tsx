@@ -2,6 +2,8 @@
 
 import axios, { AxiosError } from "axios"
 import { FormEvent, useState } from "react"
+import { signIn } from 'next-auth/react' //? Podemos loguearnos inmediatamente despues de registrarnos
+
 //! Por defecto los botones qe van dentro de un form llevan el tipo submit
 
 const Register = () => {
@@ -16,11 +18,18 @@ const Register = () => {
             const fullname = formData.get('fullname')
             //console.log(email, password, fullname);
             //TODO Guardar los datos en una sesion podemos usar redux o context y localstorage
-            const response = await axios.post('/api/auth/signup', { email, password, fullname })
+            const signupResponse = await axios.post('/api/auth/signup', { email, password, fullname })
             setError('')
-            console.log(response);
+            console.log(signupResponse);
+            const resAuth = await signIn('credentials', { //* Respuesta de next-auth
+                email: signupResponse.data.email,
+                password,
+                redirect: false,
+                //callbackUrl: '/dashboard'
+            }) //* Hacemos el login
+            console.log(resAuth)
         } catch (error) {
-            console.log(error)
+            //console.log(error)
             if (error instanceof AxiosError) setError(error.response?.data.message)
         }
 
