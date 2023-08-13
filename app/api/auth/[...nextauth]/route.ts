@@ -26,14 +26,14 @@ const handler = NextAuth({
                 if (!userFound) throw new Error("Invalid credentials") //! Nunca especificar que datos son invalidos.
                 const passwordMatch = await bcrypt.compare(credentials!.password, userFound.password)
                 if (!passwordMatch) throw new Error("Invalid credentials") //! Nunca especificar que datos son invalidos.
-                console.log(userFound);
+                //console.log(userFound);
                 return userFound
             }
         })
     ],
     callbacks: {
         jwt({ account, token, user, profile, session }) {
-            /*   console.log({account,token,user,profile,}); */
+            /* console.log({account,token,user,profile,}); */
             // * Aqui podemos modificar el token p/q guarde los datos qe ya tiene.
             // token.hello = "hello world"
             if (user) token.user = user //? Lo qe recibe de mongo lo guarda en el token

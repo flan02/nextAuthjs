@@ -12,10 +12,8 @@ const Login = () => {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const formData = new FormData(e.currentTarget) //* Obtenemos los datos del formulario
-
         const email = formData.get('email')
         const password = formData.get('password')
-
         //console.log(email, password);
         //TODO Guardar los datos en una sesion podemos usar redux o context y localstorage
         const resAuth = await signIn('credentials', { //* Respuesta de next-auth
