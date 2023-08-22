@@ -1,5 +1,6 @@
 'use client'
-import { useSession, signOut } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
+import Image from 'next/image'
 
 const Dashboard = () => {
     const { data: session, status, update } = useSession()
@@ -11,9 +12,10 @@ const Dashboard = () => {
     return (
         <>
             <h1>Dashboard</h1>
-            <p>{session?.user?.email}</p>
+            <p>Welcome {session?.user?.email}</p>
             <p>{session?.user?.name}</p>
-            <button onClick={() => { signOut() }}>Logout</button>
+
+
         </>
     )
 }

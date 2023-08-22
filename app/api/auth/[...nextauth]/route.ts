@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import GithubProvider from "next-auth/providers/github";
 import { connectDB } from '@/mongodb/mongodb'
 import User from '@/models/user'
 import bcrypt from 'bcryptjs'
@@ -9,6 +10,11 @@ import bcrypt from 'bcryptjs'
 
 //! Estas funciones se ejecutan en el servidor varias veces
 //TODO podemos autenticar usando de providers: credenciales, google, facebook, github, etc
+
+const clientId = process.env.GITHUB_ID || ""
+const clientSecret = process.env.GITHUB_SECRET || ""
+
+
 
 const handler = NextAuth({
     providers: [
@@ -29,6 +35,12 @@ const handler = NextAuth({
                 //console.log(userFound);
                 return userFound
             }
+        }),
+        GithubProvider({
+            clientId: clientId,
+            clientSecret: clientSecret,
+
+
         })
     ],
     callbacks: {
@@ -46,9 +58,15 @@ const handler = NextAuth({
             session.user = token.user as any //? La sesion tendra en el navegador data del token
             return session
         },
+        redirect({ url, baseUrl }) {
+            //console.log(url, baseUrl);
+            url = "http://localhost:3000/dashboard"
+            return url
+        }
     },
     pages: {
         signIn: '/login', //* Si accedo a localhost:3000/api/auth/signin me redirecciona a /login
+
     }
 })
 

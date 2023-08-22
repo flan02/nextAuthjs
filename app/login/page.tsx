@@ -2,6 +2,7 @@
 import { FormEvent, useState } from "react"
 import { signIn } from 'next-auth/react' //? Podemos loguearnos inmediatamente despues de registrarnos
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 //! Por defecto los botones qe van dentro de un form llevan el tipo submit
 
@@ -26,18 +27,23 @@ const Login = () => {
         //console.log(resAuth)
     }
 
+    const handleGithub = () => {
+        signIn('github')
+    }
+
     //! Usar bibliotecas como formit, reactfrom para manejar formularios desde el frontend
     //TODO Por el momento nuestro login solo esta validado desde el backend.
 
     return (
         <div>
+            <h1>Signin</h1>
             <form onSubmit={handleSubmit}>
-                <h1>Signin</h1>
                 <input type="email" name="email" placeholder="some@email.com" /><br />
                 <input type="password" name="password" placeholder="******" /><br />
                 <button type="submit">Login</button>
                 {error && <p style={{ background: "red", color: "white", width: "max-content" }}>{error}</p>}
             </form>
+            <button onClick={handleGithub}>Sign up with Github</button>
         </div>
     )
 }
