@@ -12,7 +12,7 @@ function Navbar() {
     //const session = await getServerSession() //! No vemos los cambios hasta que no se refresco la pagina
     //console.log(session?.user?.name); //! Esto es consola del backend NO del navegador
     const { status } = useSession() //! Esto es consola del navegador NO del backend
-    console.log(status);
+    console.log('This is the current status', status);
 
     //! Importante
     //! El getServerSession envia el componente desde el servidor, asi que si el cliente peticiona el componente, este no se actualizara hasta que el servidor lo envie de nuevo
@@ -26,7 +26,7 @@ function Navbar() {
                             <Link href='/about'>About</Link>
                         </li>
                         {
-                            status === "unauthenticated" ? (
+                            (status === "unauthenticated" || status !== null) ? (
                                 <>
                                     <li>
                                         <Link href='/login'>Login</Link>
@@ -38,13 +38,16 @@ function Navbar() {
                                 </>
 
                             ) : (
-                                <>
-                                    <li>
-                                        <Link href='/dashboard'>Dashboard</Link>
-                                    </li>
-                                    <button onClick={() => { signOut() }}>Logout</button>
-                                </>
+
+                                <li>
+                                    <Link href='/dashboard'>Dashboard</Link>
+                                </li>
                             )
+                        }
+                        {
+                            (status !== "unauthenticated" && status !== "loading")
+                                ? <button onClick={() => { signOut() }}>Logout</button>
+                                : null
                         }
                     </ul>
                 </div>

@@ -1,9 +1,13 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GithubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
+import LinkedinProvider from "next-auth/providers/linkedin";
 import { connectDB } from '@/mongodb/mongodb'
 import User from '@/models/user'
 import bcrypt from 'bcryptjs'
+import { callbackify } from 'util';
+import { redirect } from 'next/dist/server/api-utils';
 
 //? NextAuth tiene Databases y guarda directamente en la base de dato
 //? Recordar qe una cosa es el TOKEN & otra cosa es la SESSION
@@ -11,10 +15,12 @@ import bcrypt from 'bcryptjs'
 //! Estas funciones se ejecutan en el servidor varias veces
 //TODO podemos autenticar usando de providers: credenciales, google, facebook, github, etc
 
-const clientId = process.env.GITHUB_ID || ""
-const clientSecret = process.env.GITHUB_SECRET || ""
-
-
+const clientId_GITHUB = process.env.GITHUB_ID || ""
+const clientSecret_GITHUB = process.env.GITHUB_SECRET || ""
+const clientId_GOOGLE = process.env.GOOGLE_ID || ""
+const clientSecret_GOOGLE = process.env.GOOGLE_SECRET || ""
+const clientId_LINKEDIN = process.env.LINKEDIN_ID || ""
+const clientSecret_LINKEDIN = process.env.LINKEDIN_SECRET || ""
 
 const handler = NextAuth({
     providers: [
@@ -37,15 +43,55 @@ const handler = NextAuth({
             }
         }),
         GithubProvider({
-            clientId: clientId,
-            clientSecret: clientSecret,
-
-
+            clientId: clientId_GITHUB,
+            clientSecret: clientSecret_GITHUB,
+        }),
+        GoogleProvider({
+            clientId: clientId_GOOGLE,
+            clientSecret: clientSecret_GOOGLE,
+        }),
+        LinkedinProvider({
+            clientId: clientId_LINKEDIN,
+            clientSecret: clientSecret_LINKEDIN,
+            /*  userinfo: {
+                  url: "https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))",
+              },*/
+            authorization: {
+                url: `https://www.linkedin.com/oauth/v2/authorization?client_id=${clientId_LINKEDIN}`,
+                params: { scope: "email", client_id: clientId_LINKEDIN },
+            },
+            /*     token: {
+                     url: "https://www.linkedin.com/oauth/v2/accessToken",
+                     async request({
+                         client,
+                         params,
+                         checks,
+                         provider
+                     }) {
+                         const response = await client.oauthCallback(provider.callbackUrl, params, checks, {
+                             exchangeBody: {
+                                 client_id: clientId_LINKEDIN,
+                                 client_secret: clientSecret_LINKEDIN,
+                             }
+                         })
+                         return {
+                             tokens: response
+                         }
+                     }
+                 },
+                 profile(profile, tokens) {
+                     return {
+                         id: profile.id,
+                         name: profile.localizedFirstName + " " + profile.localizedLastName,
+                         email: profile.emailAddress,
+                         image: profile.profilePicture.displayImage,
+                     }
+                 }*/
         })
     ],
     callbacks: {
         jwt({ account, token, user, profile, session }) {
-            /* console.log({account,token,user,profile,}); */
+            console.log({ account, token, user, profile, });
             // * Aqui podemos modificar el token p/q guarde los datos qe ya tiene.
             // token.hello = "hello world"
             if (user) token.user = user //? Lo qe recibe de mongo lo guarda en el token

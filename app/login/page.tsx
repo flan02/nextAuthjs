@@ -27,9 +27,10 @@ const Login = () => {
         //console.log(resAuth)
     }
 
-    const handleGithub = () => {
-        signIn('github')
-    }
+    const handleGithub = () => signIn('github') //* Podemos pasarle un callback para que haga algo despues de loguearse o manejar el error
+    const handleGoogle = () => signIn('google')
+    const handleLinkedin = () => signIn('linkedin')
+
 
     //! Usar bibliotecas como formit, reactfrom para manejar formularios desde el frontend
     //TODO Por el momento nuestro login solo esta validado desde el backend.
@@ -43,7 +44,9 @@ const Login = () => {
                 <button type="submit">Login</button>
                 {error && <p style={{ background: "red", color: "white", width: "max-content" }}>{error}</p>}
             </form>
-            <button onClick={handleGithub}>Sign up with Github</button>
+            <button onClick={handleGithub}>Signin with Github</button>
+            <button onClick={handleGoogle}>Signin with Google</button>
+            <button onClick={handleLinkedin}>Signin with Linkedin</button>
         </div>
     )
 }
