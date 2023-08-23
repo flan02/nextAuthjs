@@ -29,7 +29,7 @@ const Login = () => {
 
     const handleGithub = () => signIn('github') //* Podemos pasarle un callback para que haga algo despues de loguearse o manejar el error
     const handleGoogle = () => signIn('google')
-    const handleLinkedin = () => signIn('linkedin')
+    const handleFacebook = () => signIn('facebook')
 
 
     //! Usar bibliotecas como formit, reactfrom para manejar formularios desde el frontend
@@ -46,7 +46,7 @@ const Login = () => {
             </form>
             <button onClick={handleGithub}>Signin with Github</button>
             <button onClick={handleGoogle}>Signin with Google</button>
-            <button onClick={handleLinkedin}>Signin with Linkedin</button>
+            <button onClick={handleFacebook}>Signin with Facebook</button>
         </div>
     )
 }
