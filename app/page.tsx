@@ -7,7 +7,13 @@ export default function Home() {
 
   return (
     <div>
-      <h1>My HomePage</h1>
+      <h1>Main</h1>
+      <p>initially there are 3 branches</p>
+      <ul>
+        <li>nextauth mongoose</li>
+        <li>nextauth prisma</li>
+        <li>jwt middlewares</li>
+      </ul>
     </div>
   )
 }
