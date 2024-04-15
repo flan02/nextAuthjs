@@ -1,19 +1,22 @@
-//import Image from 'next/image'
-//import styles from './page.module.css'
+import Link from "next/link";
+
 
 
 
 export default function Home() {
 
   return (
-    <div>
-      <h1>Main</h1>
-      <p>initially there are 3 branches</p>
-      <ul>
-        <li>nextauth mongoose</li>
-        <li>nextauth prisma</li>
-        <li>jwt middlewares</li>
-      </ul>
-    </div>
+    <>
+      <main>
+        <h1>JWT auth with Middlewares and private routes</h1>
+        <Link href="/login">Login</Link>
+
+      </main>
+      <br /><br /><br />
+      <footer>
+        <a href="https://react-hook-form.com/" target="_blank">react libraries forms</a> <br />
+        <a href="https://tempo.formkit.com/" target="_blank">react handle dates</a>
+      </footer>
+    </>
   )
 }
