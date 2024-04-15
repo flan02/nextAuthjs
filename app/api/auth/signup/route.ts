@@ -4,8 +4,8 @@ import { connectDB } from "@/mongodb/mongodb"
 import bcrypt from "bcryptjs";
 
 export async function POST(request: Request) {
-    const { fullname, email, password } = await request.json()
-    console.log(fullname, email, password);
+    const { fullname, email, password, image } = await request.json()
+    console.log(fullname, email, password, image);
     if (!password || password.length < 6) return NextResponse.json(
         { message: "Password must be at least 6 characters" },
         { status: 400 })

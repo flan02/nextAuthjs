@@ -5,6 +5,7 @@ import Link from 'next/link'
 //TODO React CSR classic
 import { signOut, useSession } from 'next-auth/react' //? Podemos obtener datos desde el lado cliente
 import { useState } from 'react'
+import { connectDB } from '@/mongodb/mongodb'
 
 //TODO React SSR (Nextjs 13)
 //import { getServerSession } from 'next-auth' //? Podemos obtener datos desde el lado servidor
@@ -58,7 +59,10 @@ function Navbar() {
                                     <li>
                                         <Link href='/dashboard'>Dashboard</Link>
                                     </li>
-                                    <button onClick={() => { signOut() }}>Logout</button>
+                                    <button onClick={() => {
+                                        // connectDB() // ! When we click the button, we must close the connection to mongodb 
+                                        signOut()
+                                    }}>Logout</button>
                                 </>
                             )
                                 : (

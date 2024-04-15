@@ -138,11 +138,11 @@ const handler = NextAuth({
             //console.log(session);
             //TODO crear interfaz nunca ANY, esto aparece en el frontend
             session.user = token.user as any //? La sesion tendra en el navegador data del token
-            console.log('Session\'s values from backend', session.user?.email);
+            //console.log('Session\'s values from backend', session.user?.email);
             await connectDB()
             const userFound = await User.findOne({ email: session.user?.email }).select("+password") //? El + es p/ añada el campo password
             if (!userFound) throw new Error("Invalid credentials") //! Nunca especificar que datos son invalidos.
-            console.log('These are the user\'s values from backend method SignIn', userFound);
+            //console.log('These are the user\'s values from backend method SignIn', userFound);
             session = { ...session, user: userFound }
             return session
 

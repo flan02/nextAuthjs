@@ -14,6 +14,7 @@ const Dashboard = () => {
     // { JSON.stringify({ session, status }, null, 2) }
 
     console.log('Session frontend / Status:', session, status);
+    console.log("User's values from frontend", user);
     return (
         <>
             <h1>Dashboard</h1>
