@@ -19,7 +19,11 @@ const Loginpage = (props: Props) => {
   const handlerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     //console.log(credentials);
-    const response = await axios.post('http://localhost:3000/api/auth', credentials)
+    const response = await axios.post('http://localhost:3000/api/auth', credentials, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
     console.log(response);
   }
 
