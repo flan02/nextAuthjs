@@ -1,95 +1,91 @@
 // TODO: Creating petition handlers
-import { NextApiRequest, NextApiResponse, NextConfig } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import jwt from 'jsonwebtoken';
 import { serialize } from "cookie";
-import { NextResponse } from "next/server";
-//import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 
 
-type typeReqBody = {
+
+
+
+interface IReqBody {
   email: string,
   password: string
 }
 
+const secretKey = 'Aixakuki01'
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
-  //console.log('The request from clientside is', req);
 
+const createJWT = (payload: IReqBody) => {
+  const token = jwt.sign(payload, secretKey, { expiresIn: '1h' })
+  return token
+}
+
+const verifyJWT = (token: string) => {
   try {
-    if (req.method === 'POST') {
-      // Leer el cuerpo de la solicitud como JSON
-      const response = await req.body
-      console.log('The request from clientside is', response);
-      // * 1- check if email and password are valid
-      // ........
-      if (response.email === 'chanivetdan@hotmail.com' && response.password === 'Aixakuki01') {
-        // * 2- check if the user exists in the database, create a token
-        const token = jwt.sign({
-          email: response.email,
-          name: 'Dan Chanivet',
-          exp: Math.floor(Date.now() / 1000) + 30 // * 30 seconds
-        }, 'secret', { expiresIn: '60' }, (err, token) => {
-          if (err) {
-            return NextResponse.json({ message: 'Error creating token' })
-          }
-          if (token) {
-            const serializedCookie = serialize('myToken', token, {
-              httpOnly: true, // * In production Cookie cannot be accessed by JavaScript nor console browser F12.
-              secure: process.env.NODE_ENV === 'production',
-              sameSite: 'strict', // * Cookie cannot be sent from another domain | sameSite: 'none' is the less strict allowing us to communicate with other domains.
-              maxAge: 45, // * Cookie could have its own expiration time different from the token.
-              path: '/' // * Cookie is available in all the routes.
-            })
-            res.setHeader('Set-Cookie', serializedCookie)
-            return NextResponse.json({ message: 'User logged in' })
-          }
-        })
-      }
-    } else {
-      return NextResponse.json({ status: 500, message: 'Invalid Method' });
-    }
+    const decoded = jwt.verify(token, secretKey)
+    return decoded
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ success: false, message: 'Error en el servidor' });
+    // ? If there are errors while verifying the token, we can throw an error.
+    throw new Error('Invalid token')
   }
-  return 0
 }
 
 
-//const data: typeReqBody = await req.body;
-/*
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
-  const response = await req.body
-  console.log(response);
-  // * 1- check if email and password are valid
-  // ........
-  if (response.email === 'chanivetdan@hotmail.com' && response.password === 'Aixakuki01') {
-    // * 2- check if the user exists in the database, create a token
-    const token = jwt.sign({
-      email: response.email,
-      name: 'Dan Chanivet',
-      exp: Math.floor(Date.now() / 1000) + 30 // * 30 seconds
-    }, 'secret', { expiresIn: '60' }, (err, token) => {
-      if (err) {
-        return res.json({ message: 'Error creating token' })
-      }
-      if (token) {
-        const serializedCookie = serialize('myToken', token, {
-          httpOnly: true, // * In production Cookie cannot be accessed by JavaScript nor console browser F12.
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict', // * Cookie cannot be sent from another domain | sameSite: 'none' is the less strict allowing us to communicate with other domains.
-          maxAge: 45, // * Cookie could have its own expiration time different from the token.
-          path: '/' // * Cookie is available in all the routes.
-        })
-        res.setHeader('Set-Cookie', serializedCookie)
-        return res.json({ message: 'User logged in' })
-      }
+export async function POST(req: NextRequest, res: NextApiResponse) {
+
+  //const body = await req.json();
+  //console.log('Body:', body);
+  try {
+
+
+    // ? Create a JWT using the req.body as payload
+    const payload = await req.json()
+    const token = createJWT(payload)
+    // ? Create a cookie with the JWT
+    const verify = verifyJWT(token)
+    console.log('Token Verified', verify);
+    const serializedCookie = serialize('myOwnToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/'
     })
+    //res.setHeader('Set-Cookie', serializedCookie)
+    const response = NextResponse.json({
+      token,
+    });
 
-    // return res.json({ token }) // ! We must not return the token to the client instead send it in a header.
+    response.cookies.set({
+      name: 'myOwnToken',
+      value: serializedCookie,
+    });
 
+    return response
+
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ success: false, message: (error as Error).message });
   }
-  return res.status(401).json({ message: 'Invalid credentials' })
-  //return res.json({ message: 'Hello from auth route server' })
+
+}
+
+
+
+
+// API route handler para verificar un JWT
+/*
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    // Obtiene el token del encabezado de autorización
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    // Verifica el token if it exists
+    const decodedToken = token ? verifyJWT(token) : undefined;
+    // Si la verificación es exitosa, devuelve el contenido decodificado del token
+    res.status(200).json({ user: decodedToken });
+  } catch (error) {
+    // Si ocurre un error, devuelve un mensaje de error
+    res.status(401).json({ error: (error as Error).message });
+  }
 }
 */

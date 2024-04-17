@@ -3,10 +3,12 @@
 import React from "react"
 import axios from "axios"
 
+
 type Props = {}
 
 const Loginpage = (props: Props) => {
   const [credentials, setCredentials] = React.useState({ email: '', password: '' })
+  const [response, setResponse] = React.useState({})
 
   const handlerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //console.log(e.target.value, e.target.name);
@@ -18,13 +20,15 @@ const Loginpage = (props: Props) => {
 
   const handlerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    //console.log(credentials);
+    console.log(credentials);
     const response = await axios.post('http://localhost:3000/api/auth', credentials, {
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+
     })
-    console.log(response);
+    console.log(response.data);
+    setResponse(response.data)
   }
 
   return (
@@ -39,6 +43,9 @@ const Loginpage = (props: Props) => {
         <button type="submit">Login</button>
       </form>
       {JSON.stringify(credentials)}
+      <br />
+      {JSON.stringify(response)}
+
 
     </>
   )
