@@ -2,7 +2,7 @@
 
 import React from "react"
 import axios from "axios"
-
+import styles from '../page.module.css'
 
 type Props = {}
 
@@ -44,7 +44,11 @@ const Loginpage = (props: Props) => {
       </form>
       {JSON.stringify(credentials)}
       <br />
-      {JSON.stringify(response)}
+      <div className={styles.box}>
+        <p className={styles.paragraph}>
+          {JSON.stringify(response)}
+        </p>
+      </div>
 
 
     </>

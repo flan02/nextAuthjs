@@ -227,3 +227,15 @@
     transform: rotate(0deg);
   }
 }
+
+.box {
+  text-overflow: clip; 
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  width: 600px;
+  height: 200px;
+  margin: 1rem auto;
+  border: 1px solid black;
+  background-color: yellow;
+}
+
