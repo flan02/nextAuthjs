@@ -1,13 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import axios from "axios"
-import { set } from "mongoose"
-import React from "react"
+import React, { useEffect } from "react"
+import { useRouter } from 'next/navigation'
 
 type Props = {}
 
 
 const HomePage = (props: Props) => {
+  const router = useRouter()
   const [profile, setProfile] = React.useState<any[]>([])
   const getProfile = async () => {
     const response = await axios.get('http://localhost:3000/api/profile', {
@@ -18,11 +20,13 @@ const HomePage = (props: Props) => {
 
     console.log(response);
     setProfile(response.data)
+
   }
 
   const logout = async () => {
-    const response = await axios.post('http://localhost:3000/api/logout')
-    console.log(response);
+    await axios.post('http://localhost:3000/api/logout')
+    //console.log(response);
+    router.push('/')
   }
 
   const parseDate = (fechaUnix: number) => {

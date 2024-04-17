@@ -4,10 +4,6 @@ import jwt from 'jsonwebtoken';
 import { serialize } from "cookie";
 import { NextRequest, NextResponse } from "next/server";
 
-
-
-
-
 interface IReqBody {
   email: string,
   password: string
@@ -17,7 +13,7 @@ const secretKey = 'MISECRET'
 
 
 const createJWT = (payload: IReqBody) => {
-  const token = jwt.sign(payload, secretKey, { expiresIn: '10 minutes' })
+  const token = jwt.sign(payload, secretKey, { expiresIn: '2 minutes' })
   return token
 }
 
@@ -31,6 +27,16 @@ const verifyJWT = (token: string) => {
   }
 }
 
+const serializeToken = (token: string) => {
+  const serializedCookie = serialize('myOwnToken', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/'
+  })
+  return serializedCookie
+}
+
 export async function POST(req: NextRequest, res: NextApiResponse) {
   //const body = await req.json();
   //console.log('Body:', body);
@@ -41,13 +47,8 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
       const token = createJWT(payload)
       // ? Create a cookie with the JWT
       const verify = verifyJWT(token)
-      console.log('Token Verified', verify);
-      const serializedCookie = serialize('myOwnToken', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/'
-      })
+      console.log(verify);
+      const serializedCookie = serializeToken(token)
       //res.setHeader('Set-Cookie', serializedCookie)
       const response = NextResponse.json({
         token,
@@ -60,11 +61,13 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
 
       return response
     } else {
+
       return NextResponse.json({ status: 401, error: 'Invalid credentials' });
     }
 
   } catch (error) {
     console.error(error);
+
     return NextResponse.json({ success: false, error: (error as Error).message });
   }
 

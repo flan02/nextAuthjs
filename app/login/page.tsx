@@ -1,12 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
-import React from "react"
+import React, { useEffect } from "react"
 import axios from "axios"
 import styles from '../page.module.css'
-
+import { useRouter } from 'next/navigation'
 type Props = {}
 
 const Loginpage = (props: Props) => {
+  const router = useRouter()
   const [credentials, setCredentials] = React.useState({ email: '', password: '' })
   const [response, setResponse] = React.useState({})
 
@@ -20,16 +22,22 @@ const Loginpage = (props: Props) => {
 
   const handlerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(credentials);
+    //console.log(credentials);
     const response = await axios.post('http://localhost:3000/api/auth', credentials, {
       headers: {
         'Content-Type': 'application/json'
       },
 
     })
-    console.log(response.data);
-    setResponse(response.data)
+    //console.log(response);
+    if (response.status == 200) {
+      setResponse(response.data)
+      router.push('/home')
+    }
+
+
   }
+
 
   return (
     <>
