@@ -19,6 +19,10 @@ const userSchema = new Schema({
         required: [true, "Fullname is required"],
         minlength: [3, "Fullname must be at least 3 characters long"],
         maxlength: [50, "Fullname must be at most 50 characters long"]
+    },
+    image: {
+        type: String,
+        default: 'https://res.cloudinary.com/dhbig9jt8/image/upload/v1713217544/no-avatar_axft7q.png'
     }
 })
 
