@@ -1,6 +1,7 @@
 import User from "@/models/user";
 import { connectDB } from "@/mongodb/mongodb";
 import bcrypt from "bcryptjs";
+
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -17,11 +18,12 @@ export async function POST(req: NextRequest) {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
     const newUser = await User.create(user);
-    //console.log(newUser)
-    return NextResponse.json({ status: 200, message: 'User added...' })
-  } catch (error) {
+    const { password, ...data } = newUser.toObject();
+    //console.log(data);
+    return NextResponse.json({ status: 200, message: 'User added...', data })
+  } catch (error: any) {
     console.log(error);
-    return NextResponse.json({ status: 500, message: 'Internal Server Error' })
+    return NextResponse.json({ status: 500, message: error.message })
   }
 }
 

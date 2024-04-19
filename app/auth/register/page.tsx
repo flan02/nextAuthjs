@@ -1,6 +1,7 @@
 'use client'
 
-import Image from "next/image"
+
+import { useRouter } from "next/navigation"
 import React from "react"
 import { useForm } from "react-hook-form"
 
@@ -16,7 +17,7 @@ const opts = {
 }
 
 const RegisterPage = (_props: Props) => {
-  const [users, setUsers] = React.useState([])
+  const router = useRouter()
   const form = useForm() // ? Default cancelling e.preventDefault() 
   const onSubmit = form.handleSubmit(async (data) => {
     //console.log(data)
@@ -27,8 +28,10 @@ const RegisterPage = (_props: Props) => {
       },
       body: JSON.stringify(data)
     })
-
     console.log(response);
+
+    if (response.status === 200) router.push('/auth/login')
+
   })
   return (
     <>
@@ -43,30 +46,7 @@ const RegisterPage = (_props: Props) => {
         {form.formState.errors.confirmPassword && <span>{`${form.formState.errors.confirmPassword?.message}`}</span>}
         <button >register</button>
       </form>
-      <article>
-        <button
-          onClick={async () => {
-            const response = await fetch('http://localhost:3000/api/auth/register', {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            })
-            console.log(response);
-            const data = await response.json();
-            setUsers(data)
-          }}
-        >get users</button>
-        {
-          users.map((user: any) => (
-            <div key={user._id}>
-              <h1>{user.fullname}</h1>
-              <p>{user.email}</p>
-              <Image src={user.image} alt={user.fullname} width={100} height={100} />
-            </div>
-          ))
-        }
-      </article>
+
     </>
   )
 }
